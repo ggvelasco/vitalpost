@@ -168,3 +168,28 @@ textarea {
   line-height: 1.7;
   white-space: pre-wrap;
 }
+
+.btn-primary.carregando {
+  position: relative;
+  color: transparent;
+}
+
+.btn-primary.carregando::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes girar {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

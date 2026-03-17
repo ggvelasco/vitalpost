@@ -120,7 +120,11 @@ function App() {
             />
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button
+            type="submit"
+            className={`btn-primary ${loading ? "carregando" : ""}`}
+            disabled={loading}
+          >
             {loading ? "Gerando..." : "Gerar post"}
           </button>
         </form>
