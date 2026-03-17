@@ -1,121 +1,143 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [form, setForm] = useState({
+    tema: "ansiedade",
+    formato: "dica",
+    tom: "acolhedor",
+    especialidade: "",
+    obs: "",
+  });
+  const [post, setPost] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const [copiado, setCopiado] = useState(false);
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setErro("");
+    setPost("");
+
+    try {
+      const response = await fetch("http://localhost:3001/api/gerar-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.erro);
+      setPost(data.post);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function copiar() {
+    navigator.clipboard.writeText(post);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2000);
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="container">
+      <div className="header">
+        <h1>VitalPost</h1>
+        <p>Gere posts para o Instagram em segundos</p>
+      </div>
 
-      <div className="ticks"></div>
+      <div className="card">
+        <form onSubmit={handleSubmit}>
+          <div className="grid-2">
+            <div className="field">
+              <label>Tema</label>
+              <select name="tema" value={form.tema} onChange={handleChange}>
+                <option value="ansiedade">Ansiedade</option>
+                <option value="autoestima">Autoestima</option>
+                <option value="relacionamentos">Relacionamentos</option>
+                <option value="burnout">Burnout</option>
+                <option value="luto">Luto</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>Formato</label>
+              <select
+                name="formato"
+                value={form.formato}
+                onChange={handleChange}
+              >
+                <option value="dica">Dica prática</option>
+                <option value="reflexao">Reflexão</option>
+                <option value="mito">Mito vs. realidade</option>
+                <option value="pergunta">Pergunta para engajamento</option>
+              </select>
+            </div>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          <div className="field">
+            <label>Tom</label>
+            <select name="tom" value={form.tom} onChange={handleChange}>
+              <option value="acolhedor">Acolhedor e empático</option>
+              <option value="educativo">Educativo e claro</option>
+              <option value="inspirador">Inspirador e motivador</option>
+              <option value="direto">Direto ao ponto</option>
+            </select>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          <div className="field">
+            <label>
+              Abordagem <span>(opcional)</span>
+            </label>
+            <input
+              type="text"
+              name="especialidade"
+              value={form.especialidade}
+              onChange={handleChange}
+              placeholder="Ex: TCC, psicanálise..."
+            />
+          </div>
+
+          <div className="field">
+            <label>
+              Observação <span>(opcional)</span>
+            </label>
+            <textarea
+              name="obs"
+              value={form.obs}
+              onChange={handleChange}
+              placeholder="Ex: mencionar vagas abertas..."
+            />
+          </div>
+
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Gerando..." : "Gerar post"}
+          </button>
+        </form>
+      </div>
+
+      {erro && <div className="erro">{erro}</div>}
+
+      {post && (
+        <div className="result">
+          <div className="result-header">
+            <span>Post gerado</span>
+            <button className="btn-copiar" onClick={copiar}>
+              {copiado ? "Copiado!" : "Copiar"}
+            </button>
+          </div>
+          <p className="post-texto">{post}</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
