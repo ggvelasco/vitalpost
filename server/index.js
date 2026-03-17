@@ -4,14 +4,6 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 import rateLimit from "express-rate-limit";
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { erro: "Muitas requisições. Tente novamente em 15 minutos." },
-});
-
-app.use("/api", limiter);
-
 dotenv.config();
 
 const app = express();
@@ -19,6 +11,14 @@ const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
 });
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { erro: "Muitas requisições. Tente novamente em 15 minutos." },
+});
+
+app.use("/api", limiter);
 
 app.use(
   cors({
